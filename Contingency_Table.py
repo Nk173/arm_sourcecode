@@ -3,6 +3,17 @@ from Measures import map_measures_to_indices;
 
 (measures_dict, measures_arr) = map_measures_to_indices();
 
+def generate_contingency_tables(vals):
+    tables = np.zeros(shape=(vals.size**4,4));
+    i = 0;
+    for tp in vals:
+        for tn in vals:
+            for fp in vals:
+                for fn in vals:
+                    tables[i] = [tp,tn,fp,fn];
+                    i += 1;
+    return tables;
+
 
 class contingency_table(object):
     def __init__(self, table):
