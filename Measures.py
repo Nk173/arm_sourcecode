@@ -1,4 +1,5 @@
 # mapping measures with indices
+import numpy as np;
 
 n_measures = 46;
 
@@ -53,9 +54,9 @@ def map_measures_to_indices():
 
 
     #mapping of indices to measure names
-    m = [0]*n_measures;
+    measures_arr = np.empty(n_measures, object);
     for key,value in measures.items():
     #     print(value)
-        m[value] = str(key);
+        measures_arr[value] = str(key);
         
-    return (measures, m);
+    return (measures, measures_arr);
