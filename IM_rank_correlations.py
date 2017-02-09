@@ -1,20 +1,7 @@
 import numpy as np;
-
-from Contingency_Table import contingency_table;
+from Contingency_Table import contingency_table, generate_contingency_tables;
 from Measures import map_measures_to_indices;
 from Ranks import ranks;
-
-def generate_contingency_tables(vals):
-    tables = np.zeros(shape=(vals.size**4,4));
-    i = 0;
-    for tp in vals:
-        for tn in vals:
-            for fp in vals:
-                for fn in vals:
-                    tables[i] = [tp,tn,fp,fn];
-                    i += 1;
-    return tables;
-
 
 vals = np.array([1,2,11,100,1000,10000]);
 
@@ -36,7 +23,7 @@ for idx,table in enumerate(tables):
     scores_matrix[idx] = t.scores;
     
 #computes the ranks class with the given scores
-ranks_matrix = ranks(scores_matrix, measures_arr)
+ranks_matrix = ranks(scores_matrix, measures_arr);
 
 # ranks_matrix.remove_outliers([measures_dict['implication_index'],
 #                               measures_dict['coverage'],
@@ -44,10 +31,10 @@ ranks_matrix = ranks(scores_matrix, measures_arr)
 
 
 ## Clustering
-n_clusters = 3
+n_clusters = 3;
 
 #prints indices of the measures in each cluster
-ranks_matrix.form_clusters(n_clusters);
+clusters = ranks_matrix.form_clusters(n_clusters);
 
 #plots the heatmap for the spearman correlation matrix and dendrogram derived from spearman correlations
-ranks_matrix.visualize();
+# ranks_matrix.visualize();
