@@ -10,7 +10,7 @@ class ranks(object):
         self.scores = scores_matrix;
         self.ranks = np.zeros(shape=scores_matrix.shape);
         self.compute_ranks();
-        self.measures_arr = np.array(measures_arr);
+        self.measures_arr = measures_arr;
     
     def compute_ranks(self):
         for idx,score in enumerate(self.scores.T):
@@ -61,16 +61,27 @@ class ranks(object):
 #             self.compute_clusters();
         self.compute_clusters();
         clusters = hierarchy.cut_tree(self.cluster, n_clusters=n_clusters);
+        clusters_dict = dict();
         for n in range(n_clusters):
-            print(n,np.count_nonzero((clusters==n)), (clusters==n).nonzero()[0]);
+            clusters_dict[n] = (clusters==n).nonzero()[0];
+        return clusters_dict;
         
     def show_correlation_matrix(self):
         if not hasattr (self, 'corr_spearman'):
             self.compute_correlation();
             
-        fig, ax = plt.subplots(figsize=[10,10], ncols=1, nrows=1);
-        plt.pcolor(self.corr_spearman, cmap = 'RdBu');
-        plt.axis([0,self.corr_spearman.shape[1],0,self.corr_spearman.shape[0]]);
+        fig, ax = plt.subplots(figsize=[10,8], ncols=1, nrows=1);
+        # plt.pcolor(self.corr_spearman, cmap = 'RdBu');
+        plt.imshow(self.corr_spearman, interpolation='none', cmap= 'RdBu');
+        # plt.axis([0,self.corr_spearman.shape[1],0,self.corr_spearman.shape[0]]);
+        
+        ax.set_xticks(np.arange(len(self.measures_arr)), minor=False);
+        ax.set_xticklabels(self.measures_arr, minor=False);
+        plt.xticks(rotation=90);
+        
+        ax.set_yticks(np.arange(len(self.measures_arr)), minor=False);
+        ax.set_yticklabels(self.measures_arr, minor=False);
+
         plt.colorbar();
         plt.show();
 
@@ -78,7 +89,11 @@ class ranks(object):
         if not hasattr(self, 'cluster'):
             self.compute_clusters();
         plt.figure(figsize=(10,10));
-        hierarchy.dendrogram(self.cluster, orientation='right', color_threshold=1);
+        def llf(id):
+            return self.measures_arr[id];
+        a = hierarchy.dendrogram(self.cluster, orientation='right', 
+                                    color_threshold=1, leaf_label_func= llf,
+                                    leaf_font_size = 7);
         plt.show();
         
     def remove_outliers(self, indices):
