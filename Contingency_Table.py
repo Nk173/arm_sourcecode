@@ -98,6 +98,10 @@ class contingency_table(object):
         self.scores[self.measures['putative_causal_dependency']] = self.putative_causal_dependency();
         self.scores[self.measures['example_counterexample_rate']] = self.example_counterexample_rate();
         self.scores[self.measures['confirmed_confidence_causal']] = self.confirmed_confidence_causal();
+        self.scores[self.measures['added_value']] = self.confirmed_confidence_causal();
+        self.scores[self.measures['collective_strength']] = self.confirmed_confidence_causal();
+        self.scores[self.measures['j_measure']] = self.confirmed_confidence_causal();
+        self.scores[self.measures['dependency']] = self.confirmed_confidence_causal();
     
     def recall (self):
         if (self.f11 + self.f01) == 0:
@@ -322,3 +326,21 @@ class contingency_table(object):
     def confirmed_confidence_causal(self):
         CCC = 0.5 * (self.P_bgivena + self.P_aprimegivenbprime) - self.P_bprimegivena;
         return CCC;
+
+    def added_value(self):
+        AV = self.P_bgivena - self.P_b;
+        return AV;
+
+    def collective_strength(self):
+        good_events = self.P_ab + self.P_aprimebprime;
+        E_good_events = (self.P_a * self.P_b) + (self.P_aprime * self.P_bprime);
+        CS = (good_events * (1 - E_good_events)) / (E_good_events * (1 - good_events));
+        return CS;
+    
+    def j_measure(self):
+        JM = (self.P_ab * np.log2(self.P_bgivena / self.P_b) 
+                + self.P_abprime * np.log2(self.P_bprimegivena / self.P_bprime));
+        return JM;
+
+    def dependency(self):
+        return self.added_value();

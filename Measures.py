@@ -1,7 +1,7 @@
 # mapping measures with indices
 import numpy as np;
 
-n_measures = 46;
+n_measures = 50;
 
 def map_measures_to_indices():
     measures = dict();
@@ -51,6 +51,10 @@ def map_measures_to_indices():
     measures['putative_causal_dependency'] = 43;
     measures['example_counterexample_rate'] = 44;
     measures['confirmed_confidence_causal'] = 45;
+    measures['added_value'] = 46;
+    measures['collective_strength'] = 47;
+    measures['j_measure'] = 48;
+    measures['dependency'] = 49;
 
 
     #mapping of indices to measure names
