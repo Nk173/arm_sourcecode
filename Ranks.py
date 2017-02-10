@@ -61,10 +61,10 @@ class ranks(object):
 #             self.compute_clusters();
         self.compute_clusters();
         clusters = hierarchy.cut_tree(self.cluster, n_clusters=n_clusters);
-        clusters_dict = dict();
+        clusters_arr = np.empty(n_clusters,object);
         for n in range(n_clusters):
-            clusters_dict[n] = (clusters==n).nonzero()[0];
-        return clusters_dict;
+            clusters_arr[n] = (clusters==n).nonzero()[0];
+        return clusters_arr;
         
     def show_correlation_matrix(self):
         if not hasattr (self, 'corr_spearman'):
