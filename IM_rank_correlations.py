@@ -31,10 +31,10 @@ ranks_matrix = ranks(scores_matrix, measures_arr);
 
 
 ## Clustering
-n_clusters = 3;
+# n_clusters = 3;
 
 #prints indices of the measures in each cluster
-clusters = ranks_matrix.form_clusters(n_clusters);
+# clusters = ranks_matrix.form_clusters(n_clusters);
 
 #plots the heatmap for the spearman correlation matrix and dendrogram derived from spearman correlations
 # ranks_matrix.visualize();
