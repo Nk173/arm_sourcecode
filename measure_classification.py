@@ -13,7 +13,7 @@ def initialize_X_Y(measures_arr, property_dict):
     return X,Y;
 
 def assign_clusters_to_Y(clusters_arr, Y):
-    for class_value,cluster_array in enumerate(clusters):
+    for class_value,cluster_array in enumerate(clusters_arr):
         Y[cluster_array] = class_value;
     return Y
 
@@ -39,24 +39,24 @@ def classify_decision_tree(X,Y):
     return predictions, tree_classifier;
 
 #same as the number of classes to classify properties into
-n_clusters = 2;
-(measures_dict, measures_arr) = map_measures_to_indices();
+# n_clusters = 2;
+# (measures_dict, measures_arr) = map_measures_to_indices();
 
 #rank_matrix.ranks is mxn where m=rank_of_individual_table  and n=measure_index
-ranks_matrix = IMR.ranks_matrix;
+# ranks_matrix = IMR.ranks_matrix;
 
 #forming clusters
-clusters = ranks_matrix.form_clusters(n_clusters);
+# clusters = ranks_matrix.form_clusters(n_clusters);
 
 #dictionary with property array as values and measures names as keys
-property_dict = compute_property_vectors();
+# property_dict = compute_property_vectors();
 
-X, Y = initialize_X_Y(measures_arr, property_dict);
-X = form_X(property_dict, measures_dict, X);
-Y = assign_clusters_to_Y(clusters, Y);
+# X, Y = initialize_X_Y(measures_arr, property_dict);
+# X = form_X(property_dict, measures_dict, X);
+# Y = assign_clusters_to_Y(clusters, Y);
 
 #outputs predictions and the classifier object
-predictions, classifier = classify_decision_tree(X,Y);
+# predictions, classifier = classify_decision_tree(X,Y);
 
 #export to pdf?
-export_to_pdf(classifier, n_clusters, len(X));
+# export_to_pdf(classifier, n_clusters, len(X));

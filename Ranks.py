@@ -4,13 +4,17 @@ from scipy.spatial.distance import pdist, squareform;
 from scipy.cluster import hierarchy;
 import matplotlib.pyplot as plt;
 
+from Measures import map_measures_to_indices, form_measures_dict;
+
+(measures_dict, measures_arr) = map_measures_to_indices();
 
 class ranks(object):
-    def __init__ (self, scores_matrix, measures_arr):
+    def __init__ (self, scores_matrix, measures_array = measures_arr, measures_dictionary = measures_dict):
         self.scores = scores_matrix;
         self.ranks = np.zeros(shape=scores_matrix.shape);
         self.compute_ranks();
-        self.measures_arr = measures_arr;
+        self.measures_arr = measures_array;
+        self.measures_dict = measures_dictionary;
     
     def compute_ranks(self):
         for idx,score in enumerate(self.scores.T):
@@ -86,8 +90,9 @@ class ranks(object):
         plt.show();
 
     def show_dendrogram(self):
-        if not hasattr(self, 'cluster'):
-            self.compute_clusters();
+        # if not hasattr(self, 'cluster'):
+        #     self.compute_clusters();
+        self.compute_clusters();            
         plt.figure(figsize=(10,10));
         def llf(id):
             return self.measures_arr[id];
@@ -99,4 +104,6 @@ class ranks(object):
     def remove_outliers(self, indices):
         self.ranks = np.delete(arr=self.ranks, obj=indices, axis=1);
         self.measures_arr = np.delete(arr=self.measures_arr, obj=indices, axis=0);
-        self.compute_correlation()
+        self.measures_dict = form_measures_dict(self.measures_arr);
+        self.compute_correlation();
+        return (measures_dict, measures_arr);
