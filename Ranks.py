@@ -37,11 +37,11 @@ class ranks(object):
             ranks_array[scores_array==u] = ranks_array[scores_array==u].sum()/counts[idx];
         return ranks_array;
     
-    def visualize(self):
+    def visualize(self, linkage_method='complete'):
         self.compute_correlation();
         self.show_correlation_matrix();
         self.compute_distance();
-        self.show_dendrogram();
+        self.show_dendrogram(linkage_method);
     
     def compute_correlation(self):
         self.corr_spearman = spearmanr(self.ranks).correlation;
@@ -89,13 +89,15 @@ class ranks(object):
         plt.colorbar();
         plt.show();
 
-    def show_dendrogram(self):
+    def show_dendrogram(self, linkage_method='complete'):
         # if not hasattr(self, 'cluster'):
         #     self.compute_clusters();
-        self.compute_clusters();            
+        self.compute_clusters(method=linkage_method);            
         plt.figure(figsize=(10,10));
+        
         def llf(id):
             return self.measures_arr[id];
+
         a = hierarchy.dendrogram(self.cluster, orientation='right', 
                                     color_threshold=1, leaf_label_func= llf,
                                     leaf_font_size = 7);
