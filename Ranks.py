@@ -54,16 +54,16 @@ class ranks(object):
         self.distance_1D = squareform(self.distance, checks=False);
         self.distance_uppertriangle = squareform(self.distance_1D);
 
-    def compute_clusters(self):
+    def compute_clusters(self, method='complete'):
 #         if not hasattr (self, 'distance_uppertriangle'):
 #             self.compute_distance();
         self.compute_distance();
-        self.cluster = hierarchy.linkage(self.distance_uppertriangle, method='complete');
+        self.cluster = hierarchy.linkage(self.distance_uppertriangle, method=method);
         
-    def form_clusters(self, n_clusters):
+    def form_clusters(self, n_clusters, method='complete'):
 #         if not hasattr(self, 'cluster'):
 #             self.compute_clusters();
-        self.compute_clusters();
+        self.compute_clusters(method);
         clusters = hierarchy.cut_tree(self.cluster, n_clusters=n_clusters);
         clusters_arr = np.empty(n_clusters,object);
         for n in range(n_clusters):
