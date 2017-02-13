@@ -31,9 +31,9 @@ def export_to_pdf(tree_classifier,n_clusters, n_measures):
     filename = 'decision_tree_clusters_' + str(n_clusters) + '_measures_' + str(n_measures) + '.pdf';
     graph.write_pdf(filename);
     
-def classify_decision_tree(X,Y):
+def classify_decision_tree(X,Y, criterion='gini'):
     from sklearn import tree;
-    tree_classifier = tree.DecisionTreeClassifier();
+    tree_classifier = tree.DecisionTreeClassifier(criterion=criterion);
     tree_classifier.fit(X,Y);
     predictions = tree_classifier.predict(X)
     return predictions, tree_classifier;
