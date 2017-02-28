@@ -7,7 +7,7 @@ from Measures import map_measures_to_indices;
 
 def initialize_X_Y(measures_arr, property_dict):
     n_measures = len(measures_arr);
-    n_properties = len(property_dict['recall'])
+    n_properties = len(property_dict[measures_arr[0]]);
     X = np.zeros(shape=(n_measures, n_properties), dtype=int);
     Y = np.zeros(n_measures, dtype=int);
     return X,Y;

@@ -99,3 +99,22 @@ class invariance(object):
         eval_str3 = 'self.table1.' + self.measure + '() > table3.' + self.measure + '()';
         eval_str4 = 'self.table2.' + self.measure + '() > table4.' + self.measure + '()';
         return (eval(eval_str1) and eval(eval_str2) and eval(eval_str3) and eval(eval_str4));
+
+    def uniform_scaling(self):
+        # O(kM) - multiply by [k, 0; 0, k] on the left
+        #k = 3
+        table1 = contingency_table(self.table1.table * np.array([3,3,3,3]));
+        #k = 5
+        table2 = contingency_table(self.table2.table * np.array([5,5,5,5]));
+        eval_str1 = 'np.around(self.table1.' + self.measure + '(),4) == np.around(table1.' + self.measure + '(),4)';
+        eval_str2 = 'np.around(self.table2.' + self.measure + '(),4) == np.around(table2.' + self.measure + '(),4)';
+
+        # # O(MC) - multiply by [k1, 0; 0, k2] on the right
+        # #k1 = 2, k2 = 3
+        # table3 = contingency_table(self.table1.table * np.array([2,3,2,3]));
+        # #k1 = 3, k2 = 5
+        # table4 = contingency_table(self.table2.table * np.array([3,5,3,5]));
+        # eval_str3 = 'np.around(self.table1.' + self.measure + '(),4) == np.around(table3.' + self.measure + '(),4)';
+        # eval_str4 = 'np.around(self.table2.' + self.measure + '(),4) == np.around(table4.' + self.measure + '(),4)';
+        
+        return (eval(eval_str1) and eval(eval_str2));

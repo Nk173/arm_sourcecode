@@ -51,6 +51,7 @@ class ranks(object):
 #             self.compute_correlation();
         self.compute_correlation();
         self.distance = np.sqrt((1 - self.corr_spearman) / 2);
+        # self.distance = (1 - self.corr_spearman) / 2;        
         self.distance_1D = squareform(self.distance, checks=False);
         self.distance_uppertriangle = squareform(self.distance_1D);
 
@@ -108,4 +109,4 @@ class ranks(object):
         self.measures_arr = np.delete(arr=self.measures_arr, obj=indices, axis=0);
         self.measures_dict = form_measures_dict(self.measures_arr);
         self.compute_correlation();
-        return (measures_dict, measures_arr);
+        return (self.measures_dict, self.measures_arr);

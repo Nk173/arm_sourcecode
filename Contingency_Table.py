@@ -98,10 +98,10 @@ class contingency_table(object):
         self.scores[self.measures['putative_causal_dependency']] = self.putative_causal_dependency();
         self.scores[self.measures['example_counterexample_rate']] = self.example_counterexample_rate();
         self.scores[self.measures['confirmed_confidence_causal']] = self.confirmed_confidence_causal();
-        self.scores[self.measures['added_value']] = self.confirmed_confidence_causal();
-        self.scores[self.measures['collective_strength']] = self.confirmed_confidence_causal();
-        self.scores[self.measures['j_measure']] = self.confirmed_confidence_causal();
-        self.scores[self.measures['dependency']] = self.confirmed_confidence_causal();
+        self.scores[self.measures['added_value']] = self.added_value();
+        self.scores[self.measures['collective_strength']] = self.collective_strength();
+        self.scores[self.measures['j_measure']] = self.j_measure();
+        self.scores[self.measures['dependency']] = self.dependency();
     
     def recall (self):
         if (self.f11 + self.f01) == 0:
