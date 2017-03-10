@@ -6,35 +6,104 @@ import scipy.misc as sm;
 
 (measures_dict, measures_arr) = map_measures_to_indices();
 
+inv = ['P2', 'P3', 'O1', 'O2', 'O3', 'O4', 'O5'];
+
+for i,j in itertools.combinations(range(7),2):
+    prop_name = inv[i] + ' and ' + inv[j];
+    inv.append(prop_name);
+    
+    prop_name = inv[i] + ' or ' + inv[j];
+    inv.append(prop_name);
+
+# takes a property array and returns support array
+def compute_supports(properties_vector):
+    (n_measures, n_props) = properties_vector.shape;    
+    
+    support_array = np.empty(n_props, float);
+
+    for i in range(n_props):
+        support_array[i] = np.sum(properties_vector[:,i]) / len(properties_vector[:,i]);
+
+    return support_array;
+
+def convert_property_array_to_dict(properties_vector, measures_dict):
+
+    properties_dict = dict();
+    for key,value in measures_dict.items():
+        properties_dict[key] = properties_vector[value];
+    
+    return properties_dict;
+
+
 #Converts the 0/1 binary array to -1/+1 array
 def convert_zero_to_minus_one(properties_vector):
     
-    properties_vector_modified = dict();
-    for key, value in properties_vector.items():
-        property_vector = np.empty(len(value), int);
-        for idx, element in enumerate(value):
+    # properties_vector_modified = dict();
+
+    for idx, value in enumerate(properties_vector):
+        for idx_1, element in enumerate(value):
             if element:
-                property_vector[idx] = 1;
+                properties_vector[idx,idx_1] = 1;
             else:
-                property_vector[idx] = -1;                
+                properties_vector[idx,idx_1] = -1;
+    
+    # for key, value in properties_vector.items():
+    #     property_vector = np.empty(len(value), int);
+    #     for idx, element in enumerate(value):
+    #         if element:
+    #             property_vector[idx] = 1;
+    #         else:
+    #             property_vector[idx] = -1;                
 
-        properties_vector_modified[key] = property_vector;
+    #     properties_vector_modified[key] = property_vector;
 
-    return properties_vector_modified
+    return properties_vector
+
+
+# takes a boolean column of property vector (n_measures x 1) and threshold value and returns true if it is satisfied
+def check_support_threshold(property_vector, threshold_lower, threshold_upper):
+    support = np.sum(property_vector) / len(property_vector);
+    
+    if (support >= threshold_lower) and (support <= threshold_upper):
+        return True;
+    
+    return False;
+
+def compute_property_vectors_with_support(properties_vector, property_names, threshold_lower, threshold_upper = 1):
+    
+    # properties_vector_with_support = np.empty(0,bool);
+    properties_vector_with_support = properties_vector;
+    (n_measures, n_props) = properties_vector.shape;
+    
+    to_remove = np.empty(0, int);
+    for i in range(n_props):
+        if not (check_support_threshold(properties_vector[:,i], threshold_lower, threshold_upper)):
+            to_remove = np.append(to_remove, i);
+    
+    properties_vector_with_support = np.delete(properties_vector_with_support, to_remove, axis=1);
+    property_names = np.delete(property_names, to_remove, axis=0);
+
+    return (properties_vector_with_support, property_names);
 
 
 # Can take a dict of measure names as keys if needed, else will pull the original one in Measures module
 # returns a dict with property vectors as values
-def compute_property_vectors(measures_dict=measures_dict):
-    properties_vector = dict();
+def compute_property_vectors_without_support(measures_dict=measures_dict):
+    n_props = 7 + (2 * sm.comb(7,2));
+    # n_props = 7 + (2 * sm.comb(7,2)) + (4 * sm.comb(7,3)) + (8 * sm.comb(7,4)) + (16 * sm.comb(7,5));
+    n_measures = len(measures_dict);
+
+    properties_vector = np.empty((n_measures, int(n_props)));
+    properties_vector_names = np.empty(int(n_props), object);
+
     for key,value in measures_dict.items():
         invariance_object = invariance(key);
         # [P2 P3 O1 O2 O3 O4 O5]
 
-        n_props = 7 + (2 * sm.comb(7,2)) + (4 * sm.comb(7,3)) + (8 * sm.comb(7,4)) + (16 * sm.comb(7,5));
 
         property_vector = np.empty(int(n_props), bool);
-
+        support_vector = np.empty(len(property_vector), float);
+        
         property_vector[0] = invariance_object.P2();
         property_vector[1] = invariance_object.P3();
         property_vector[2] = invariance_object.O1();
@@ -42,7 +111,7 @@ def compute_property_vectors(measures_dict=measures_dict):
         property_vector[4] = invariance_object.O3();
         property_vector[5] = invariance_object.O4();
         property_vector[6] = invariance_object.O5();
-
+        
         k = 7
         for i,j in itertools.combinations(range(7),2):
             property_vector[k] = np.logical_and(property_vector[i],property_vector[j]);
@@ -56,72 +125,128 @@ def compute_property_vectors(measures_dict=measures_dict):
         #     # print(str(k) + ' = ' + str(i) + ' or ' + str(j));
         #     k += 1;
 
-        for i,j,l in itertools.combinations(range(7),3):
-            property_vector[k] = np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]);
-            k += 1;
+        # for i,j,l in itertools.combinations(range(7),3):
+        #     property_vector[k] = np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]);
+        #     k += 1;
 
-        for i,j,l,m in itertools.combinations(range(7),4):
-            property_vector[k] = np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-            k += 1;
+        # for i,j,l,m in itertools.combinations(range(7),4):
+        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
+        #     k += 1;
 
-        for i,j,l,m,n in itertools.combinations(range(7),5):
-            property_vector[k] = np.logical_and(np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
+        # for i,j,l,m,n in itertools.combinations(range(7),5):
+        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
             
-            property_vector[k] = np.logical_and(np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_and(np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
 
-            property_vector[k] = np.logical_or(np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
 
-            property_vector[k] = np.logical_or(np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
-            property_vector[k] = np.logical_or(np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-            k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
+        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
+        #     k += 1;
 
-        properties_vector[key] = property_vector;
+        # properties_vector[key] = property_vector;
+        properties_vector[value] = property_vector;
 
-        properties_vector_modified = convert_zero_to_minus_one(properties_vector);
-    return properties_vector_modified;
+    return properties_vector;
+
+
+def compute_property_vectors(measures_dict=measures_dict):
+
+    threshold_lower_1 = 0.2;
+    threshold_lower_2 = 0.3;
+    threshold_upper_2 = 0.8;
+    
+    properties_vector = compute_property_vectors_without_support(measures_dict);
+    property_names = np.array(inv);
+
+    properties_vector_with_support_1 = np.empty((50,0));
+    properties_names_with_support_1 = np.empty(0);
+    properties_vector_with_support_2 = np.empty((50,0));
+    properties_names_with_support_2 = np.empty(0);
+
+    #nC1 properties
+    (properties_vector_with_support_1, properties_names_with_support_1) = compute_property_vectors_with_support(properties_vector[:,0:7], property_names[0:7], threshold_lower_1);
+
+    #nC2 properties
+    (properties_vector_with_support_2, properties_names_with_support_2) = compute_property_vectors_with_support(properties_vector[:,7:], property_names[7:], threshold_lower_2, threshold_upper_2);
+
+    properties_vector_with_support = np.concatenate((properties_vector_with_support_1, properties_vector_with_support_2), axis=1);
+    property_names = np.concatenate((properties_names_with_support_1, properties_names_with_support_2), axis=0);
+
+    # print(properties_vector_with_support.shape);
+
+    support_array = compute_supports(properties_vector_with_support);
+    #convert property array to a dict
+    # properties_dict = convert_property_array_to_dict(properties_vector_with_support, measures_dict);
+    # convert zeros to -1s 
+    # properties_vector_with_support = convert_zero_to_minus_one(properties_vector_with_support);
+
+    return (properties_vector_with_support, property_names, support_array);
+
+def compute_homogeneity(property_vector, cluster_vector):
+    N_C = np.sum(cluster_vector);
+    N_P = np.sum(property_vector);
+    n = len(cluster_vector);
+    h = 0;
+    for i in range(n):
+        if(property_vector[i]):
+            h -= cluster_vector[i]**0.5 * np.log(property_vector[i]/N_P) * (property_vector[i]/cluster_vector[i]);
+    h = 1- h/(N_C);
+    return h;
+
+def compute_property_frequencies_in_cluster_set(property_array, cluster_vector):
+    (n_measures, n_properties) = property_array.shape;
+    n_clusters = len(cluster_vector);
+    cluster_property_vector = np.zeros((n_clusters, n_properties));
+
+    for idx_clust, cluster in enumerate(cluster_vector):
+        for idx_prop in range(n_properties):
+            cluster_property_vector[idx_clust, idx_prop] = np.sum(property_array[cluster, idx_prop]);
+    
+    return np.transpose(cluster_property_vector);

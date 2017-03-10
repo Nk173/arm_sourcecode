@@ -5,23 +5,24 @@ import IM_rank_correlations as IMR;
 from Measures import map_measures_to_indices;
 
 
-def initialize_X_Y(measures_arr, property_dict):
-    n_measures = len(measures_arr);
-    n_properties = len(property_dict[measures_arr[0]]);
-    X = np.zeros(shape=(n_measures, n_properties), dtype=int);
+def initialize_X_Y(measures_arr, property_vector):
+    # n_measures = len(measures_arr);
+    (n_measures, n_properties) = property_vector.shape;
+    # X = np.zeros(shape=(n_measures, n_properties), dtype=int);
     Y = np.zeros(n_measures, dtype=int);
-    return X,Y;
+    return property_vector,Y;
 
 def assign_clusters_to_Y(clusters_arr, Y):
     for class_value,cluster_array in enumerate(clusters_arr):
         Y[cluster_array] = class_value;
     return Y
 
-def form_X(property_dict, measures_dict, X):
-    for key,value in property_dict.items():
-        index = measures_dict[key];
-        X[index] = value;
-    return X;
+def form_X(property_vector, measures_dict, X):
+
+    # for key,value in property_dict.items():
+    #     index = measures_dict[key];
+    #     X[index] = value;
+    return property_vector;
 
 def export_to_pdf(tree_classifier,n_clusters, n_measures):
     import pydotplus
