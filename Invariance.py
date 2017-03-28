@@ -67,6 +67,15 @@ class invariance(object):
         eval_str2 = 'self.table2.' + self.measure + '() == table2.' + self.measure + '()';
         return (eval(eval_str1) and eval(eval_str2));
     
+    def P1(self):
+        # O(M) = 0 if det(M) = 0
+        table1 = contingency_table(np.array([3,2,6,4]));
+        table2 = contingency_table(np.array([1,5,2,10]));
+        eval_str1 = 'np.around(table1.' + self.measure + '(),4) == 0';
+        eval_str2 = 'np.around(table2.' + self.measure + '(),4) == 0';
+       
+        return (eval(eval_str1) and eval(eval_str2));
+
     def P2(self):
         # 
         #k = 1
@@ -106,8 +115,8 @@ class invariance(object):
         table1 = contingency_table(self.table1.table * np.array([3,3,3,3]));
         #k = 5
         table2 = contingency_table(self.table2.table * np.array([5,5,5,5]));
-        eval_str1 = 'np.around(self.table1.' + self.measure + '(),4) == np.around(table1.' + self.measure + '(),4)';
-        eval_str2 = 'np.around(self.table2.' + self.measure + '(),4) == np.around(table2.' + self.measure + '(),4)';
+        eval_str1 = 'np.around(self.table1.' + self.measure + '(),6) == np.around(table1.' + self.measure + '(),6)';
+        eval_str2 = 'np.around(self.table2.' + self.measure + '(),6) == np.around(table2.' + self.measure + '(),6)';
 
         # # O(MC) - multiply by [k1, 0; 0, k2] on the right
         # #k1 = 2, k2 = 3

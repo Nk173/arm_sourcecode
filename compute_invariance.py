@@ -6,25 +6,31 @@ import scipy.misc as sm;
 
 (measures_dict, measures_arr) = map_measures_to_indices();
 
-inv = ['P2', 'P3', 'O1', 'O2', 'O3', 'O4', 'O5'];
+inv = ['P1', 'P2', 'P3', 'O1', 'O2', 'O3', 'O4', 'O5', 'US'];
 
-for i,j in itertools.combinations(range(7),2):
+for i,j in itertools.combinations(range(9),2):
     prop_name = inv[i] + ' and ' + inv[j];
     inv.append(prop_name);
     
     prop_name = inv[i] + ' or ' + inv[j];
     inv.append(prop_name);
 
-# takes a property array and returns support array
+
+
+# takes a property array and returns support array and corresponding measure of impurity
 def compute_supports(properties_vector):
     (n_measures, n_props) = properties_vector.shape;    
     
     support_array = np.empty(n_props, float);
+    entropy_array = np.empty(n_props, float);
 
     for i in range(n_props):
-        support_array[i] = np.sum(properties_vector[:,i]) / len(properties_vector[:,i]);
+        n = np.sum(properties_vector[:,i]);
+        N = len(properties_vector[:,i]);
+        support_array[i] =  n/N ;
+        entropy_array[i] = entropy(np.array([n, N-n]));
 
-    return support_array;
+    return (support_array, entropy_array);
 
 def convert_property_array_to_dict(properties_vector, measures_dict):
 
@@ -89,8 +95,8 @@ def compute_property_vectors_with_support(properties_vector, property_names, thr
 # Can take a dict of measure names as keys if needed, else will pull the original one in Measures module
 # returns a dict with property vectors as values
 def compute_property_vectors_without_support(measures_dict=measures_dict):
-    n_props = 7 + (2 * sm.comb(7,2));
-    # n_props = 7 + (2 * sm.comb(7,2)) + (4 * sm.comb(7,3)) + (8 * sm.comb(7,4)) + (16 * sm.comb(7,5));
+    n_props = 9 + (2 * sm.comb(9,2));
+    # n_props = 7 + (2 * sm.comb(7,2)) + (4 * sm.comb(7,3)) + (9 * sm.comb(7,4)) + (16 * sm.comb(7,5));
     n_measures = len(measures_dict);
 
     properties_vector = np.empty((n_measures, int(n_props)));
@@ -98,22 +104,25 @@ def compute_property_vectors_without_support(measures_dict=measures_dict):
 
     for key,value in measures_dict.items():
         invariance_object = invariance(key);
-        # [P2 P3 O1 O2 O3 O4 O5]
+        # [P1 P2 P3 O1 O2 O3 O4 O5]
+        k = 9;
 
 
         property_vector = np.empty(int(n_props), bool);
         support_vector = np.empty(len(property_vector), float);
         
-        property_vector[0] = invariance_object.P2();
-        property_vector[1] = invariance_object.P3();
-        property_vector[2] = invariance_object.O1();
-        property_vector[3] = invariance_object.O2();
-        property_vector[4] = invariance_object.O3();
-        property_vector[5] = invariance_object.O4();
-        property_vector[6] = invariance_object.O5();
+        property_vector[0] = invariance_object.P1();
+        property_vector[1] = invariance_object.P2();
+        property_vector[2] = invariance_object.P3();
+        property_vector[3] = invariance_object.O1();
+        property_vector[4] = invariance_object.O2();
+        property_vector[5] = invariance_object.O3();
+        property_vector[6] = invariance_object.O4();
+        property_vector[7] = invariance_object.O5();
+        property_vector[8] = invariance_object.uniform_scaling();
         
-        k = 7
-        for i,j in itertools.combinations(range(7),2):
+
+        for i,j in itertools.combinations(range(k),2):
             property_vector[k] = np.logical_and(property_vector[i],property_vector[j]);
             # print(str(k+1) + ' = ' + str(i) + ' and ' + str(j));
             k += 1;
@@ -198,9 +207,13 @@ def compute_property_vectors_without_support(measures_dict=measures_dict):
 
 def compute_property_vectors(measures_dict=measures_dict):
 
-    threshold_lower_1 = 0.2;
-    threshold_lower_2 = 0.3;
-    threshold_upper_2 = 0.8;
+    # for single properties
+    threshold_lower_1 = 0.00;
+    threshold_upper_1 = 1;
+    
+    # for combinations of properties
+    threshold_lower_2 = 0;
+    threshold_upper_2 = 1;
     
     properties_vector = compute_property_vectors_without_support(measures_dict);
     property_names = np.array(inv);
@@ -211,34 +224,57 @@ def compute_property_vectors(measures_dict=measures_dict):
     properties_names_with_support_2 = np.empty(0);
 
     #nC1 properties
-    (properties_vector_with_support_1, properties_names_with_support_1) = compute_property_vectors_with_support(properties_vector[:,0:7], property_names[0:7], threshold_lower_1);
+    (properties_vector_with_support_1, properties_names_with_support_1) = compute_property_vectors_with_support(properties_vector[:,0:9], property_names[0:9], threshold_lower_1, threshold_upper_2);
 
     #nC2 properties
-    (properties_vector_with_support_2, properties_names_with_support_2) = compute_property_vectors_with_support(properties_vector[:,7:], property_names[7:], threshold_lower_2, threshold_upper_2);
+    (properties_vector_with_support_2, properties_names_with_support_2) = compute_property_vectors_with_support(properties_vector[:,9:], property_names[9:], threshold_lower_2, threshold_upper_2);
 
     properties_vector_with_support = np.concatenate((properties_vector_with_support_1, properties_vector_with_support_2), axis=1);
     property_names = np.concatenate((properties_names_with_support_1, properties_names_with_support_2), axis=0);
 
     # print(properties_vector_with_support.shape);
 
-    support_array = compute_supports(properties_vector_with_support);
+    (support_array, entropy_array) = compute_supports(properties_vector_with_support);
     #convert property array to a dict
     # properties_dict = convert_property_array_to_dict(properties_vector_with_support, measures_dict);
     # convert zeros to -1s 
     # properties_vector_with_support = convert_zero_to_minus_one(properties_vector_with_support);
 
-    return (properties_vector_with_support, property_names, support_array);
+    return (properties_vector_with_support, property_names, support_array, entropy_array);
 
-def compute_homogeneity(property_vector, cluster_vector):
-    N_C = np.sum(cluster_vector);
-    N_P = np.sum(property_vector);
-    n = len(cluster_vector);
+def entropy(vector):
+    prob_vector = vector/np.sum(vector);
+    n = len(vector);
+    N = np.sum(vector);
     h = 0;
     for i in range(n):
-        if(property_vector[i]):
-            h -= cluster_vector[i]**0.5 * np.log(property_vector[i]/N_P) * (property_vector[i]/cluster_vector[i]);
-    h = 1- h/(N_C);
-    return h;
+        if(prob_vector[i]):
+            h -= prob_vector[i] * np.log2(prob_vector[i]);
+
+    return h/np.log2(n);
+
+# def gini_index(vector):
+
+    
+def compute_homogeneity(property_vector, cluster_vector):
+    n = len(property_vector);
+    N_C = np.sum(cluster_vector);
+    H = 0;
+
+    for i in range(n):
+        # number of measures possessing the property
+        p1 = property_vector[i];
+        # number of measures NOT possessing the property
+        p2 = cluster_vector[i] - property_vector[i];
+        
+        #computing entropy for p1 and p2
+        e = entropy(np.array([p1, p2]));
+        
+        #computing weighted average of the entropies, but not considering cluster of size 1 or below
+        if (cluster_vector[i] > 1):
+            H += e * cluster_vector[i] / N_C;
+
+    return H;
 
 def compute_property_frequencies_in_cluster_set(property_array, cluster_vector):
     (n_measures, n_properties) = property_array.shape;

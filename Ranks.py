@@ -50,8 +50,9 @@ class ranks(object):
 #         if not hasattr (self, 'corr_spearman'):
 #             self.compute_correlation();
         self.compute_correlation();
+        # self.distance = -self.corr_spearman;
         self.distance = np.sqrt((1 - self.corr_spearman) / 2);
-        # self.distance = (1 - self.corr_spearman) / 2;        
+        # self.distance = (1 - self.corr_spearman) / 2;
         self.distance_1D = squareform(self.distance, checks=False);
         self.distance_uppertriangle = squareform(self.distance_1D);
 

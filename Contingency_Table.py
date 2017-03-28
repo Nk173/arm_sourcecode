@@ -1,4 +1,5 @@
 import numpy as np;
+from math import erf;
 from Measures import map_measures_to_indices;
 
 (measures_dict, measures_arr) = map_measures_to_indices();
@@ -102,7 +103,24 @@ class contingency_table(object):
         self.scores[self.measures['collective_strength']] = self.collective_strength();
         self.scores[self.measures['j_measure']] = self.j_measure();
         self.scores[self.measures['dependency']] = self.dependency();
-    
+        
+        # self.scores = np.round(self.scores, decimals = 6);
+
+
+        # self.scores[self.measures['theil_uncertainty_coefficient']] = self.theil_uncertainty_coefficient();
+        # self.scores[self.measures['TIC']] = self.TIC();
+        # self.scores[self.measures['logical_necessity']] = self.logical_necessity();
+        # self.scores[self.measures['kulczynsky_2']] = self.kulczynsky_2();
+        # self.scores[self.measures['k_measure']] = self.k_measure();
+        # self.scores[self.measures['interestingness_weighting_dependency']] = self.interestingness_weighting_dependency();
+        # self.scores[self.measures['directed_information_ratio']] = self.directed_information_ratio();
+        # self.scores[self.measures['chi_square']] = self.chi_square();
+        # self.scores[self.measures['dilated_chi_square']] = self.dilated_chi_square();
+        # self.scores[self.measures['conditional_entropy']] = self.conditional_entropy();
+        # self.scores[self.measures['complement_class_support']] = self.complement_class_support();
+        # self.scores[self.measures['intensity_of_implication']] = self.intensity_of_implication();
+        # self.scores[self.measures['correlation_coefficient']] = self.correlation_coefficient();
+        
     def recall (self):
         if (self.f11 + self.f01) == 0:
             return np.nan
@@ -344,3 +362,92 @@ class contingency_table(object):
 
     def dependency(self):
         return self.added_value();
+
+    def theil_uncertainty_coefficient(self):
+        MI = self.mutual_information();
+        TUC = MI / ( -1 * self.P_b * np.log2(self.P_b)
+                     - self.P_bprime * np.log2(self.P_bprime) );
+        return TUC;
+
+    def TIC(self):
+        factor1 = self.directed_information_ratio();
+        table2 = contingency_table([self.f01, self.f00, self.f11, self.f10]);
+        factor2 = table2.directed_information_ratio();
+        # print(factor1,factor2);
+        T = np.sqrt(factor1 * factor2);
+        return T;
+
+    def logical_necessity(self):
+        LN = (1 - self.P_agivenb) / (1 - self.P_agivenbprime);
+        return LN;
+
+    def kulczynsky_2(self):
+        K2 = ( self.P_ab / self.P_a + self.P_ab / self.P_b) / 2;
+        return K2;
+
+    def k_measure(self):
+        KM = ( self.P_bgivena * np.log2(self.P_bgivena / self.P_b) +
+                self.P_bprimegivenaprime * np.log2(self.P_bprimegivenaprime / self.P_bprime) -
+                self.P_bgivena * np.log2(self.P_bgivena / self.P_bprime) - 
+                self.P_bprimegivenaprime * np.log2(self.P_bprimegivenaprime / self.P_b) );
+        return KM;
+
+    def interestingness_weighting_dependency(self):
+        l = 2;
+        m = 1;
+        IWD = ( ( self.P_ab / ( self.P_a * self.P_b ) )**l - 1 ) * self.P_ab**m;
+        return IWD;
+
+    def directed_information_ratio(self):
+        if (self.P_b == 1):
+            DIR = -np.inf;
+        elif ((self.P_b <= 0.5) & (self.P_bgivena <= 0.5)):
+            DIR = 0;
+        elif ((self.P_b <= 0.5) & (self.P_bgivena > 0.5)):
+            DIR = 1 + self.P_bgivena * np.log2(self.P_bgivena) + self.P_bprimegivena * np.log2(self.P_bprimegivena);
+        elif ((self.P_b > 0.5) & (self.P_bgivena <= 0.5)):
+            DIR = 1 + 1 / (self.P_b * np.log2(self.P_b) + self.P_bprime * np.log2(self.P_bprime));
+        elif ((self.P_b > 0.5) & (self.P_bgivena > 0.5)):
+            DIR = 1 - ( self.P_bgivena * np.log2(self.P_bgivena) + self.P_bprimegivena * np.log2(self.P_bprimegivena) ) / ( self.P_b * np.log2(self.P_b) + self.P_bprime * np.log2(self.P_bprime) );
+        else:
+            raise ValueError('cannot compute DIR');            
+        return DIR;
+
+    def chi_square(self):
+        numerator = self.N * ( self.P_ab - self.P_a * self.P_b )**2;
+        denominator = self.P_a * self.P_aprime * self.P_b * self.P_bprime;
+        CS = numerator/denominator;
+        return CS;
+
+    def dilated_chi_square(self):
+        alpha = 1;
+        numerator = self.P_a * self.P_aprime * self.P_b * self.P_bprime;
+        op1 = min(self.P_a, self.P_aprime);
+        op2 = min(self.P_b, self.P_bprime);
+        op3 = max(self.P_a, self.P_aprime);
+        op4 = max(self.P_b, self.P_bprime);
+        denominator = ( min(op1, op2) * min(op3, op4) )**2;
+        DCS = (numerator / denominator)**alpha * self.chi_square();
+        return DCS;
+
+    def conditional_entropy(self):
+        CE = -1 * self.P_bgivena * np.log2(self.P_bgivena) - self.P_bprimegivena * np.log2(self.P_bprimegivena);
+        return CE;
+
+    def complement_class_support(self):
+        CCS = self.P_abprime * self.P_bprime;
+        return CCS;
+
+    def intensity_of_implication(self):
+        IIN_factor = self.implication_index() / np.sqrt(2);
+        # IIN_factor_s = IIN_factor**2;
+        # p = 1 - np.power ( np.exp, ( -1 * IIN_factor_s * ( 4/np.pi + 0.147 * IIN_factor_s) / (1 + 0.147 * IIN_factor_s) ) );
+        # IIM = 0.5 - 0.5 * np.sign(IIN_factor)
+        IIM = 0.5 - 0.5 * erf(IIN_factor);
+        return IIM;
+
+    def correlation_coefficient(self):
+        numerator = self.P_ab - self.P_a * self.P_b;
+        denominator = np.sqrt( self.P_a * self.P_b * self.P_aprime * self.P_bprime );
+        CCO = numerator / denominator;
+        return CCO;
