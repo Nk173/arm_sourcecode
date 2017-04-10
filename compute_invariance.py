@@ -7,7 +7,6 @@ import scipy.misc as sm;
 (measures_dict, measures_arr) = map_measures_to_indices();
 
 inv = ['P1', 'P2', 'P3', 'O1', 'O2', 'O3', 'O4', 'O5', 'US'];
-
 for i,j in itertools.combinations(range(9),2):
     prop_name = inv[i] + ' and ' + inv[j];
     inv.append(prop_name);
@@ -15,7 +14,81 @@ for i,j in itertools.combinations(range(9),2):
     prop_name = inv[i] + ' or ' + inv[j];
     inv.append(prop_name);
 
+inv = np.array(inv);
 
+
+def new_property_vectors():
+    props = dict();
+    prop_names = ['UNAI_f11','UNAI_f00','UNAI_f10','UNAI_f01','UNAI','UNZR_f11','UNZR_f00','UNZR_f10','UNZR_f01','UNZR'];
+    props['lift'] = [1,-1,1,1,-1,1,0,0,0,0];
+    props['jaccard'] = [1,1,1,1,1,1,-1,0,0,-1];
+    props['confidence'] = [1,1,1,1,1,1,-1,1,-1,-1];
+    props['precision'] = [1,1,1,1,1,1,-1,1,-1,-1];
+    props['recall'] = [1,1,1,1,1,1,-1,-1,1,-1];
+    props['specificity'] = [1,1,1,1,1,-1,1,-1,1,-1];
+    props['ganascia'] = [1,1,1,1,1,1,-1,1,-1,-1];
+    props['kulczynsky_1'] = [-1,1,1,1,-1,1,-1,0,0,-1];
+    props['f_measure'] = [1,1,1,1,1,1,-1,0,0,-1];
+    props['confidence_causal'] = [1,1,1,1,1,1,1,1,-1,-1];
+    props['odds_ratio'] = [-1,-1,1,1,-1,0,0,0,0,0];
+    props['negative_reliability'] = [1,1,1,1,1,-1,1,-1,1,-1];
+    props['sebag_schoenauer'] = [-1,1,1,1,-1,1,-1,0,-1,-1]
+    props['accuracy'] = [1,1,1,1,1,0,0,0,0,0];
+    props['support'] = [1,1,1,1,1,1,-1,0,0,-1];
+    props['coverage'] = [1,1,1,1,1,0,-1,-1,0,-1];
+    props['prevalence'] = [1,1,1,1,1,0,-1,0,-1,-1];
+    props['relative_risk'] = [1,-1,1,1,-1,1,0,1,0,0];
+    props['novelty'] = [1,1,1,1,1,1,1,1,1,1];
+    props['yules_q'] = [1,1,1,1,1,0,0,0,0,0];
+    props['yules_y'] = [1,1,1,1,1,0,0,0,0,0];
+    props['cosine'] = [1,1,1,1,1,1,-1,1,1,-1];
+    props['least_contradiction'] = [1,1,-1,1,-1,1,-1,1,-1,-1];
+    props['odd_multiplier'] = [1,-1,1,1,-1,1,0,0,1,0];
+    props['confirm_descriptive'] = [1,1,1,1,1,1,-1,1,-1,-1];
+    props['confirm_causal'] = [1,1,1,1,1,1,1,1,-1,-1];
+    props['certainty_factor'] = [1,1,1,-1,-1,0,0,-1,1,-1];
+    props['loevinger'] = [1,1,1,-1,-1,0,0,-1,1,-1];
+    props['conviction'] = [1,1,1,1,1,0,0,0,1,0];
+    props['information_gain'] = [1,1,1,1,1,1,1,0,0,0];
+    props['laplace_correction'] = [1,1,1,1,1,1,-1,1,-1,-1];
+    props['klosgen'] = [1,1,1,1,1,0,-1,-1,-1,-1];
+    props['piatetsky_shapiro'] = [1,1,1,1,1,1,1,1,1,1];
+    props['zhang'] = [1,-1,1,-1,-1,1,0,1,0,0];
+    props['one_way_support'] = [1,1,1,1,1,-1,0,-1,0,-1];
+
+    props['two_way_support'] = [1,1,1,1,1,-1,0,1,1,-1];
+    props['implication_index'] = [1,1,1,1,1,-1,-1,-1,-1,-1];
+    props['leverage'] = [1,1,1,1,1,1,0,1,-1,-1];
+    props['kappa'] = [1,1,1,1,1,0,0,1,1,0];
+    props['confirmed_confidence_causal'] = [1,1,1,1,1,1,1,1,-1,-1];
+    props['example_counterexample_rate'] = [1,1,-1,1,-1,0,-1,1,-1,-1];
+    props['putative_causal_dependency'] = [1,1,1,1,1,0,0,1,1,0];
+    props['dependency'] = [1,1,1,1,1,0,0,0,0,0];
+    props['j_measure'] = [1,1,1,1,1,-1,-1,1,-1,-1];
+    props['collective_strength'] = [1,1,1,1,1,1,1,1,1,1];
+    props['gini_index'] = [1,1,1,1,1,-1,-1,0,0,-1];
+    props['goodman_kruskal'] = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
+    props['mutual_information'] = [1,1,1,1,1,-1,-1,1,1,-1];
+    props['normalized_mutual_information'] = [1,1,1,1,1,-1,-1,-1,-1,-1];
+    props['added_value'] = [-1,1,-1,-1,-1,0,0,0,0,0];
+
+    return (props, prop_names);
+
+#checks whether the values are a specific combination of n/p/y respectively
+def UN_combination_value(value1, value2):
+    if (value1 == -1) and (value2 == -1):
+            return 1;
+    elif (value1 == -1) and (value2 == 0):
+            return 2;
+    elif (value1 == -1) and (value2 == 1):
+            return 3;
+    elif (value1 == 1) and (value2 == -1):
+            return 4;
+    elif (value1 == 1) and (value2 == 0):
+            return 5;
+    elif (value1 == 1) and (value2 == 1):
+            return 6;
+    return 0;
 
 # takes a property array and returns support array and corresponding measure of impurity
 def compute_supports(properties_vector):
@@ -25,10 +98,41 @@ def compute_supports(properties_vector):
     entropy_array = np.empty(n_props, float);
 
     for i in range(n_props):
+        prop_vector = properties_vector[:,i];
+
         n = np.sum(properties_vector[:,i]);
         N = len(properties_vector[:,i]);
         support_array[i] =  n/N ;
         entropy_array[i] = entropy(np.array([n, N-n]));
+
+    return (support_array, entropy_array);
+
+def compute_supports_updated(properties_vector):
+    (n_measures, n_props) = properties_vector.shape;    
+    u_states = np.unique(properties_vector);
+
+    support_array = np.empty((n_props,len(u_states)), float);
+    entropy_array = np.empty((n_props), float);
+
+    for i in range(n_props):
+        prop_vector = properties_vector[:,i];
+
+        N = len(prop_vector);
+        
+        u_vect = np.unique(prop_vector);
+        counts = np.zeros(len(u_states));
+        
+        for idx_u in range(len(u_states)):
+            for p_m in prop_vector:
+                if (p_m == u_states[idx_u]):
+                    counts[idx_u] += 1;
+                    
+        support_array[i,:] = counts/N;
+        entropy_array[i] = entropy(counts);
+#         n = np.sum(properties_vector[:,i]);
+#         N = len(properties_vector[:,i]);
+#         support_array[i] =  n/N ;
+#         entropy_array[i] = entropy(np.array([n, N-n]));
 
     return (support_array, entropy_array);
 
@@ -205,7 +309,7 @@ def compute_property_vectors_without_support(measures_dict=measures_dict):
     return properties_vector;
 
 
-def compute_property_vectors(measures_dict=measures_dict):
+def compute_property_vectors(measures_dict=measures_dict, property_names=inv):
 
     # for single properties
     threshold_lower_1 = 0.00;
@@ -216,7 +320,7 @@ def compute_property_vectors(measures_dict=measures_dict):
     threshold_upper_2 = 1;
     
     properties_vector = compute_property_vectors_without_support(measures_dict);
-    property_names = np.array(inv);
+    # property_names = np.array(inv);
 
     properties_vector_with_support_1 = np.empty((50,0));
     properties_names_with_support_1 = np.empty(0);
@@ -234,7 +338,7 @@ def compute_property_vectors(measures_dict=measures_dict):
 
     # print(properties_vector_with_support.shape);
 
-    (support_array, entropy_array) = compute_supports(properties_vector_with_support);
+    (support_array, entropy_array) = compute_supports_updated(properties_vector_with_support);
     #convert property array to a dict
     # properties_dict = convert_property_array_to_dict(properties_vector_with_support, measures_dict);
     # convert zeros to -1s 
@@ -248,7 +352,9 @@ def entropy(vector):
     N = np.sum(vector);
     h = 0;
     for i in range(n):
-        if(prob_vector[i]):
+        if(prob_vector[i]<0):
+            print('frequency lesser than 0', vector);
+        if(prob_vector[i]>0):
             h -= prob_vector[i] * np.log2(prob_vector[i]);
 
     return h/np.log2(n);
@@ -257,18 +363,23 @@ def entropy(vector):
 
     
 def compute_homogeneity(property_vector, cluster_vector):
-    n = len(property_vector);
+    # property_vector - n_prop_states x n_clusters
+    # cluster_vector - n_clusters x 1
+
+    # number of clusters
+    n = len(cluster_vector);
     N_C = np.sum(cluster_vector);
     H = 0;
 
     for i in range(n):
+        e = entropy(property_vector[:,i]);
         # number of measures possessing the property
-        p1 = property_vector[i];
+        # p1 = property_vector[i];
         # number of measures NOT possessing the property
-        p2 = cluster_vector[i] - property_vector[i];
+        # p2 = cluster_vector[i] - property_vector[i];
         
         #computing entropy for p1 and p2
-        e = entropy(np.array([p1, p2]));
+        # e = entropy(np.array([p1, p2]));
         
         #computing weighted average of the entropies, but not considering cluster of size 1 or below
         if (cluster_vector[i] > 1):
@@ -276,6 +387,7 @@ def compute_homogeneity(property_vector, cluster_vector):
 
     return H;
 
+# when there are 2 states of property status
 def compute_property_frequencies_in_cluster_set(property_array, cluster_vector):
     (n_measures, n_properties) = property_array.shape;
     n_clusters = len(cluster_vector);
@@ -286,3 +398,65 @@ def compute_property_frequencies_in_cluster_set(property_array, cluster_vector):
             cluster_property_vector[idx_clust, idx_prop] = np.sum(property_array[cluster, idx_prop]);
     
     return np.transpose(cluster_property_vector);
+
+def map_UN_properties_to_combinations(property_array):
+    (n_measures, n_props_old) = property_array.shape;
+    n_props_new = 16;
+    new_property_array = np.empty((n_measures, n_props_new), int);
+    new_property_names = np.empty(n_props_new, object);
+    
+    freq_array = ['f11', 'f10', 'f01', 'f00'];
+    k = 0;
+        # UNAI_fij
+    for i in range(len(freq_array)):
+        # UNZR_fij
+        for j in range(len(freq_array)):
+            new_property_names[k] = freq_array[i] + '_' + freq_array[j];
+            for m in range(n_measures):
+                p_vector = property_array[m,:];
+                new_property_array[m,k] = UN_combination_value(p_vector[i],p_vector[j+5]);
+            k += 1;
+    return (new_property_array, new_property_names);
+
+
+
+# can take any number of property states and returns a 
+# cluster property vector of dimensions
+# (n_props, n_prop_states, n_clusters)
+def compute_property_frequencies_in_cluster_set_updated(property_array, cluster_vector):
+    (n_measures, n_properties) = property_array.shape;
+    n_clusters = len(cluster_vector);
+    u_states = np.unique(property_array);
+#     print(u_states)
+    cluster_property_vector = np.zeros((n_properties, len(u_states), n_clusters));
+
+    for idx_clust, cluster in enumerate(cluster_vector):
+        for idx_prop in range(n_properties):
+            count = np.zeros(len(u_states));
+            cluster_prop_vector = property_array[cluster, idx_prop];
+            for i in range(len(u_states)):
+                for prop_val in cluster_prop_vector:
+                    if (prop_val == u_states[i]):
+                        count[i] += 1;
+            cluster_property_vector[idx_prop,:,idx_clust] = count
+    return cluster_property_vector;
+
+# returns the property vector - (n_measures, n_props)
+def compute_new_property_vectors(measures_dict):
+    # initialize default properties dict
+    (prop, prop_names) = new_property_vectors();
+    n_props = len(prop_names);
+    properties_array = np.empty((len(measures_dict),n_props), int);
+    for key,value in measures_dict.items():
+        properties_array[value,:] = prop[key];
+    
+    # k = n_props;
+    # for i,j in itertools.combinations(range(k),2):
+    #     properties_array[k] = np.logical_and(properties_array[i],properties_array[j]);
+    #     # print(str(k+1) + ' = ' + str(i) + ' and ' + str(j));
+    #     k += 1;
+    #     properties_array[k] = np.logical_or(properties_array[i],properties_array[j]);
+    #     k += 1;
+
+
+    return (properties_array, prop_names);

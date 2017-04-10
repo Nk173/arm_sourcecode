@@ -21,16 +21,23 @@ class ranks(object):
             self.ranks[:,idx] = self.return_ranks(score);
     
     def return_ranks(self, scores_array):
+        
         # takes mxn
         temp = np.argsort(scores_array)[::-1];
 
         ranks_array = np.empty(len(scores_array), float);
+        
         #   Assigning ranks to the scores according to the order in 'temp' array (descending score)
-        ranks_array[temp] = np.arange(len(scores_array));
-        #   Assigning nan ranks to nan scores
-        ranks_array[np.isnan(scores_array)] = np.nan;
+        ranks_array[temp] = np.arange(len(scores_array)) + 1;
+        
+        scores_array = np.around(scores_array, decimals=8);
+        unique, counts = np.unique(scores_array, return_counts=True);
 
-        unique, counts = np.unique(scores_array[~np.isnan(scores_array)], return_counts=True);
+        # new version - nan scores get lowest values
+        #   Assigning nan ranks to nan scores
+        # ranks_array[np.isnan(scores_array)] = np.nan;
+
+        # unique, counts = np.unique(scores_array[~np.isnan(scores_array)], return_counts=True);
 
         # Handle ties by assigning averaged values to the tied scores
         for idx,u in enumerate(unique):

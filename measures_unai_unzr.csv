@@ -1,0 +1,75 @@
+Measure,UNZR_f11,UNZR_f00,UNZR_f10,UNZR_f01,UNZR Nature,UNAI F11,UNAI F00,UNAI F10,UNAI F01,UNAI
+Lift,"0,1","0,1","0,-1","0,-1",Weak,Y,N,Y,Y,N
+Jaccard,1,-1,"0,-1","0,-1",Nothing,Y,Y,Y,Y,Y
+Confidence,1,-1,-1,1,Nothing,Y,Y,Y,Y,Y
+Recall,1,-1,1,-1,Nothing,Y,Y,Y,Y,Y
+Specificity,-1,1,1,-1,Nothing,Y,Y,Y,Y,Y
+Ganascia,1,-1,-1,1,Nothing,Y,Y,Y,Y,Y
+Kulczynski 1,1,-1,"0,-1","0,-1",Nothing,N,Y,Y,Y,N
+F-Measure,1,-1,"0,-1","0,-1",Nothing,Y,Y,Y,Y,Y
+causal Confidence,1,1,-1,1,Nothing,Y,Y,Y,Y,Y
+Odd's Ratio,"0,1","0,1",-1,-1,Weak,N,N,Y,Y,N
+Sebag - Schoenauer,1,-1,-1,1,Nothing,N,Y,Y,Y,N
+Accuracy,"0,1","0,1","0,-1","0,-1",Weak,Y,Y,Y,Y,Y
+Support,1,"0,-1","0,-1","0,-1",Nothing,Y,Y,Y,Y,Y
+Coverage,"0,1","0,-1","0,1","0,-1",Nothing,Y,Y,Y,Y,Y
+Prevalence,"0,1","0,-1","0,-1","0,1",Nothing,Y,Y,Y,Y,Y
+Relative Risk ,1,"0,1",-1,-1,Weak,Y,N,Y,Y,N
+Yule's Q,"0,1","0,1","0,-1","0,-1",Weak,Y,Y,Y,Y,Y
+Yule's Y,1,1,-1,-1,Strong,Y,Y,Y,Y,Y
+Cosine,1,-1,-1,"0,-1",Nothing,Y,Y,Y,Y,Y
+Least Contradiction,1,-1,-1,"0,1,-1",Nothing,Y,Y,N,Y,N
+Odd Multiplier,1,"0,1",-1,-1,Weak,Y,N,Y,Y,N
+Descriptive Confirm,1,"0,1,-1",-1,"0,1,-1",Nothing,Y,Y,Y,Y,Y
+                 Causal Confirm,"1,0","1,0",-1,"0,1,-1",Nothing,Y,Y,Y,Y,Y
+Loevinger,"0,-1","0,1","0,1,-1",-1,Nothing,N,Y,Y,N,N
+Conviction,"0,1","0,1",-1,-1,Weak,Y,Y,Y,Y,Y
+Informational Gain,1,1,"0,-1","0,-1",Weak,Y,Y,Y,Y,Y
+Laplace,1,-1,-1,1,Nothing,Y,Y,Y,Y,Y
+Klosgen,-1,"0,1",-1,"0,-1",Nothing,Y,Y,Y,Y,Y
+Piatetsky - Shapiro,"0,1","0,1","0,-1","0,-1",Weak,Y,Y,Y,Y,Y
+Zhang,STRONG,WEAK,STRONG,WEAK,WEAK,Y,N,Y,N,N
+When P(XY)P(Y') > P(Y)P(XY'),1,1,-1,"0,-1",Weak,Y,Y,Y,N,N
+When P(XY)P(Y') < P(Y)P(XY'),1,"0,1",-1,-1,Weak,Y,N,Y,Y,N
+One way support,-1,"0,1","0,1,-1","0,-1",Nothing,Y,Y,Y,Y,Y
+Two way support,-1,"0,1",-1,-1,Nothing,Y,Y,Y,Y,Y
+Implication Index,"0,-1","0,-1",1,1,Nothing,Y,Y,Y,Y,Y
+Leverage,"1,-1","0,1","0,1,-1","0,1,-1",Nothing,Y,Y,Y,Y,Y
+Correlation co-efficient,1,1,-1,-1,Strong,Y,Y,Y,Y,Y
+Kappa,"0,1","0,1",-1,-1,Weak,Y,Y,Y,Y,Y
+ Confirmed  causal Confidence,"0,1","0,1","0,1,-1",1,Nothing,Y,Y,Y,Y,Y
+Examples and counter-examples rate,1,-1,-1,1,Nothing,Y,Y,N,Y,N
+Putative causal Dependency,1,1,"1,-1",-1,Nothing,Y,Y,Y,Y,Y
+J-measure,-1,"0,1,-1",-1,"0,1,-1",Nothing,Y,Y,Y,Y,Y
+Mutual Information,-1,-1,-1,-1,Nothing,N,N,N,N,N
+ Interestingness Weighting Dependency,0,"0,1,-1","0,-1","0,-1",Nothing,Y,N,Y,Y,N
+Collective Strength,"1,0,-1","1,0,-1","1,0,-1","1,0,-1",Nothing,Y,Y,Y,Y,Y
+Gini,"0,1,-1","0,1,-1","1,-1,0","0,1,-1",Nothing,N,N,N,N,N
+Goodman-Kruskal,Nothing,Nothing,Nothing,Nothing,Nothing,N,N,N,N,N
+"When f10+f00 > f11+f01 , f01 > f00 , f10 > f11","0,1,-1",-1,0,1,,Y,N,Y,Y,N
+"When f10+f00 > f11+f01 , f01 < f00 , f10 > f11",0,0,0,0,,Y,Y,Y,Y,Y
+"When f10+f00 > f11+f01 , f01 > f00 , f10 < f11","0,1",-1,-1,"0,1",,Y,N,N,Y,N
+"When f10+f00 > f11+f01 , f01 < f00 , f10 < f11",1,0,-1,"0,1,-1",,Y,Y,N,Y,N
+"When f10+f00 < f11+f01 , f01 > f00 , f10 > f11",-1,"0,1,-1",1,0,,N,Y,Y,Y,N
+"When f10+f00 < f11+f01 , f01 < f00 , f10 > f11",-1,"0,1","0,1",-1,,N,Y,Y,N,N
+"When f10+f00 < f11+f01 , f01 > f00 , f10 < f11",0,0,0,0,,Y,Y,Y,Y,Y
+"When f10+f00 < f11+f01 , f01 < f00 , f10 < f11",0,1,"0,1,-1",-1,,Y,Y,Y,Y,N
+Added value,-1,"0,1",1,"0,-1",Nothing,Y,N,Y,Y,N
+Chi-square,-1,-1,-1,-1,Nothing,N,N,N,N,N
+Complement class support,-1,-1,1,1,Nothing,Y,Y,Y,Y,Y
+conditional entropy,1,-1,1,1,Nothing,Y,Y,Y,Y,Y
+Directed Information Ratio,,,,,Nothing,Y,Y,Y,Y,Y
+P(Y)=1,-1,-1,1,1,Nothing,Y,Y,Y,Y,Y
+P(Y)²0.5 and P(B/A)²0.5,-1,-1,1,1,Nothing,Y,Y,Y,Y,Y
+P(Y)²0.5 and P(B/A)>0.5,-1,-1,-1,1,Nothing,Y,Y,Y,Y,Y
+P(Y)>0.5 and P(B/A)²0.5(#),1,1,1,1,Nothing,Y,Y,Y,Y,Y
+P(Y)>0.5 and P(B/A)>0.5(#),1,"0,1,-1",1,"0,1,-1",Nothing,Y,Y,Y,Y,Y
+K-measure,"0,1,-1","0,1,-1","0,1,-1","0,1,-1",Nothing,Y,Y,Y,Y,Y
+Kulczynski 2,1,-1,-1,-1,Nothing,Y,Y,Y,Y,Y
+Logical Necessity,-1,-1,1,1,Nothing,Y,Y,N,Y,N
+Normalized Mutual Information,-1,-1,-1,-1,Nothing,Y,Y,Y,Y,Y
+Theil Uncertainity Coefficient,-1,-1,-1,-1,Nothing,Y,Y,Y,Y,Y
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
