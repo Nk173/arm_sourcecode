@@ -58,8 +58,8 @@ class ranks(object):
 #             self.compute_correlation();
         self.compute_correlation();
         # self.distance = -self.corr_spearman;
-        self.distance = np.sqrt((1 - self.corr_spearman) / 2);
-        # self.distance = (1 - self.corr_spearman) / 2;
+        # self.distance = np.sqrt((1 - self.corr_spearman) / 2);
+        self.distance = (1 - self.corr_spearman) / 2;
         self.distance_1D = squareform(self.distance, checks=False);
         self.distance_uppertriangle = squareform(self.distance_1D);
 
@@ -98,7 +98,7 @@ class ranks(object):
         plt.colorbar();
         plt.show();
 
-    def show_dendrogram(self, linkage_method='complete'):
+    def show_dendrogram(self, linkage_method='complete', color_threshold=1):
         # if not hasattr(self, 'cluster'):
         #     self.compute_clusters();
         self.compute_clusters(method=linkage_method);            
@@ -108,7 +108,7 @@ class ranks(object):
             return self.measures_arr[id];
 
         a = hierarchy.dendrogram(self.cluster, orientation='right', 
-                                    color_threshold=1, leaf_label_func= llf,
+                                    color_threshold=color_threshold, leaf_label_func= llf,
                                     leaf_font_size = 7);
         plt.show();
         
