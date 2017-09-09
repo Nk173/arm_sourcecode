@@ -17,7 +17,7 @@ def initialize_measures_array():
     'two_way_support', 'implication_index', 'gini_index',
     'goodman_kruskal', 'leverage', 'kappa',
     'putative_causal_dependency', 'example_counterexample_rate',
-    'confirmed_confidence_causal', 'added_value', 'collective_strength', 'j_measure', 'dependency',
+    'confirmed_confidence_causal', 'added_value', 'collective_strength', 'j_measure', 'dependency'
     # 'theil_uncertainty_coefficient', 'TIC', 'logical_necessity',
     # 'kulczynsky_2', 'k_measure', 'interestingness_weighting_dependency', 'directed_information_ratio', 'chi_square', 'dilated_chi_square', 'conditional_entropy', 'complement_class_support', 'intensity_of_implication', 'correlation_coefficient'
     ];

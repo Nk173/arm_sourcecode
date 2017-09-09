@@ -6,7 +6,7 @@ import scipy.misc as sm;
 
 (measures_dict, measures_arr) = map_measures_to_indices();
 
-inv = ['P1', 'P2', 'P3', 'O1', 'O2', 'O3', 'O4', 'O5', 'US'];
+inv = ['P1', 'P2', 'P3', 'O1', 'O2', 'O3', 'O4', 'O5'];
 for i,j in itertools.combinations(range(9),2):
     prop_name = inv[i] + ' and ' + inv[j];
     inv.append(prop_name);
@@ -15,6 +15,129 @@ for i,j in itertools.combinations(range(9),2):
     inv.append(prop_name);
 
 inv = np.array(inv);
+
+# Piatetsky - Shapiro Property Vectors
+def property_vectors_PS():
+    props = dict();
+    prop_names = ['P1', 'P2', 'P3'];
+    
+    props['accuracy'] = [0, 1, 1]
+    props['certainty_factor'] = [1, 1, 1]
+    props['confidence'] = [0, 1, 0]
+    props['confidence_causal'] = [0, 1, 1]
+    props['confirm_causal'] = [0, 1, 1]
+    props['confirm_descriptive'] = [0, 1, 0]
+    props['conviction'] = [1, 1, 1]
+    props['cosine'] = [0, 1, 1]
+    props['coverage'] = [0, 0, 0]
+
+    props['f_measure'] = [0, 1, 1]
+    props['ganascia'] = [0, 1, 0]
+    props['gini_index'] = [1, 0, 0]
+    props['information_gain'] = [1, 1, 1]
+    props['jaccard'] = [0, 1, 1]
+    props['kappa'] = [1, 1, 1]
+    props['klosgen'] = [1, 1, 1]
+    props['kulczynsky_1'] = [0, 1, 1]
+    
+    props['laplace_correction'] = [0, 1, 0]
+    props['least_contradiction'] = [0, 1, 0]
+    props['lift'] = [1, 1, 1]
+    props['loevinger'] = [1, 1, 1]
+    props['negative_reliability'] = [0, 1, 1]
+    props['novelty'] = [1, 1, 1]
+    props['odd_multiplier'] = [1, 1, 1]
+    props['odds_ratio'] = [1, 1, 1]
+    props['one_way_support'] = [1, 0, 0]
+
+    props['piatetsky_shapiro'] = [1, 1, 1]
+    props['precision'] = [0, 1, 0]
+    props['prevalence'] = [0, 0, 0]
+    props['recall'] = [0, 1, 0]
+    props['relative_risk'] = [1, 1, 1]
+    props['sebag_schoenauer'] = [0, 1, 0]
+    props['specificity'] = [0, 1, 1]
+    props['support'] = [0, 1, 0]
+    props['yules_q'] = [1, 1, 1]
+    props['yules_y'] = [1, 1, 1]
+    props['zhang'] = [1, 0, 0]
+
+    props['added_value'] = [1, 1, 1]
+    props['collective_strength'] = [1, 1, 1]
+    props['confirmed_confidence_causal'] = [0, 1, 1]
+    props['dependency'] = [1, 1, 1]
+    props['example_counterexample_rate'] = [0, 1, 0] #not strictly decreasing for P3
+    props['goodman_kruskal'] = [1, 0, 0]
+    props['implication_index'] = [1, 0, 0]
+    props['j_measure'] = [1, 0, 0]
+    props['leverage'] = [0, 1, 1]
+    props['mutual_information'] = [1, 0, 0] #calculated via plot
+    props['normalized_mutual_information'] = [1, 0, 0] #calculated via plot
+    props['putative_causal_dependency'] = [1, 1, 1]
+    props['two_way_support'] = [1, 0, 1]
+
+    return (props, prop_names);
+
+# Tan - Kumar Property Vectors
+def property_vectors_TK():
+    props = dict();
+    prop_names = ['O1', 'O2', 'O3', 'O4', 'O5'];
+    
+    props['accuracy'] = [1, 0, 0, 1, 0]
+    props['certainty_factor'] = [0, 0, 0, 0, 0]
+    props['confidence'] = [0, 0, 0, 0, 1]
+    props['confidence_causal'] = [0, 0, 0, 0, 0]
+    props['confirm_causal'] = [0, 0, 0, 0, 0]
+    props['confirm_descriptive'] = [0, 0, 0, 0, 0]
+    props['conviction'] = [0, 0, 0, 0, 0]
+    props['cosine'] = [1, 0, 0, 0, 1]
+    props['coverage'] = [0, 0, 0, 0, 0]
+
+    props['f_measure'] = [1, 0, 0, 0, 1]
+    props['ganascia'] = [0, 0, 0, 0, 1]
+    props['gini_index'] = [0, 0, 0, 1, 0]
+    props['information_gain'] = [1, 0, 0, 0, 0]
+    props['jaccard'] = [1, 0, 0, 0, 1]
+    props['kappa'] = [1, 0, 0, 1, 0]
+    props['klosgen'] = [0, 0, 0, 0, 0]
+    props['kulczynsky_1'] = [1, 0, 0, 0, 1]
+    
+    props['laplace_correction'] = [0, 0, 0, 0, 1]
+    props['least_contradiction'] = [0, 0, 0, 0, 1]
+    props['lift'] = [1, 0, 0, 0, 0]
+    props['loevinger'] = [0, 0, 0, 1, 0]
+    props['negative_reliability'] = [0, 0, 0, 0, 0]
+    props['novelty'] = [1, 0, 0, 1, 0]
+    props['odd_multiplier'] = [0, 0, 0, 0, 0]
+    props['odds_ratio'] = [1, 1, 1, 1, 0]
+    props['one_way_support'] = [0, 0, 0, 0, 0]
+
+    props['piatetsky_shapiro'] = [1, 0, 1, 1, 0]
+    props['precision'] = [0, 0, 0, 0, 1]
+    props['prevalence'] = [0, 0, 0, 0, 0]
+    props['recall'] = [0, 0, 0, 0, 1]
+    props['relative_risk'] = [0, 0, 0, 0, 0]
+    props['sebag_schoenauer'] = [0, 0, 0, 0, 1]
+    props['specificity'] = [0, 0, 0, 0, 0]
+    props['support'] = [1, 0, 0, 0, 0]
+    props['yules_q'] = [1, 1, 1, 1, 0]
+    props['yules_y'] = [1, 1, 1, 1, 0]
+    props['zhang'] = [0, 0, 0, 0, 0]
+
+    props['added_value'] = [0, 0, 0, 0, 0]
+    props['collective_strength'] = [1, 0, 1, 1, 0]
+    props['confirmed_confidence_causal'] = [0, 0, 0, 0, 0]
+    props['dependency'] = [0, 0, 0, 0, 0]
+    props['example_counterexample_rate'] = [0, 0, 0, 0, 1]
+    props['goodman_kruskal'] = [1, 0, 0, 1, 0]
+    props['implication_index'] = [0, 0, 0, 1, 0]
+    props['j_measure'] = [0, 0, 0, 0, 0]
+    props['leverage'] = [0, 0, 0, 0, 0]
+    props['mutual_information'] = [1, 0, 0, 1, 0]
+    props['normalized_mutual_information'] = [0, 0, 0, 1, 0]
+    props['putative_causal_dependency'] = [0, 0, 0, 0, 0]
+    props['two_way_support'] = [1, 0, 0, 0, 0]
+    return (props, prop_names)
 
 
 def new_property_vectors():
@@ -199,33 +322,24 @@ def compute_property_vectors_with_support(properties_vector, property_names, thr
 # Can take a dict of measure names as keys if needed, else will pull the original one in Measures module
 # returns a dict with property vectors as values
 def compute_property_vectors_without_support(measures_dict=measures_dict):
-    n_props = 9 + (2 * sm.comb(9,2));
-    # n_props = 7 + (2 * sm.comb(7,2)) + (4 * sm.comb(7,3)) + (9 * sm.comb(7,4)) + (16 * sm.comb(7,5));
+    n_props = 8 + (2 * sm.comb(8,2));
     n_measures = len(measures_dict);
 
     properties_vector = np.empty((n_measures, int(n_props)));
-    properties_vector_names = np.empty(int(n_props), object);
 
+    (properties_PS, property_names_PS) = property_vectors_PS()
+    (properties_TK, property_names_TK) = property_vectors_TK()
+    
     for key,value in measures_dict.items():
-        invariance_object = invariance(key);
+
         # [P1 P2 P3 O1 O2 O3 O4 O5]
-        k = 9;
-
-
+        k = 8;
         property_vector = np.empty(int(n_props), bool);
-        support_vector = np.empty(len(property_vector), float);
         
-        property_vector[0] = invariance_object.P1();
-        property_vector[1] = invariance_object.P2();
-        property_vector[2] = invariance_object.P3();
-        property_vector[3] = invariance_object.O1();
-        property_vector[4] = invariance_object.O2();
-        property_vector[5] = invariance_object.O3();
-        property_vector[6] = invariance_object.O4();
-        property_vector[7] = invariance_object.O5();
-        property_vector[8] = invariance_object.uniform_scaling();
+        property_vector[0:3] = [bool(i) for i in properties_PS[key]]
+        property_vector[3:8] = [bool(i) for i in properties_TK[key]]
         
-
+        #computing nC2 combinations of properties
         for i,j in itertools.combinations(range(k),2):
             property_vector[k] = np.logical_and(property_vector[i],property_vector[j]);
             # print(str(k+1) + ' = ' + str(i) + ' and ' + str(j));
@@ -233,77 +347,7 @@ def compute_property_vectors_without_support(measures_dict=measures_dict):
             property_vector[k] = np.logical_or(property_vector[i],property_vector[j]);
             k += 1;
 
-        # for i,j in itertools.combinations(range(7),2):
-        #     property_vector[k] = np.logical_or(property_vector[i],property_vector[j]);
-        #     # print(str(k) + ' = ' + str(i) + ' or ' + str(j));
-        #     k += 1;
-
-        # for i,j,l in itertools.combinations(range(7),3):
-        #     property_vector[k] = np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]);
-        #     k += 1;
-
-        # for i,j,l,m in itertools.combinations(range(7),4):
-        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]);
-        #     k += 1;
-
-        # for i,j,l,m,n in itertools.combinations(range(7),5):
-        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-            
-        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_and(np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-
-        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_and(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-
-        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_and(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_and(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_or(np.logical_and(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-        #     property_vector[k] = np.logical_or(np.logical_or(np.logical_or(np.logical_or(property_vector[i],property_vector[j]), property_vector[l]), property_vector[m]),property_vector[n]);
-        #     k += 1;
-
-        # properties_vector[key] = property_vector;
+        #put property vector at the index provided by measures_dict[key]
         properties_vector[value] = property_vector;
 
     return properties_vector;
@@ -328,10 +372,10 @@ def compute_property_vectors(measures_dict=measures_dict, property_names=inv):
     properties_names_with_support_2 = np.empty(0);
 
     #nC1 properties
-    (properties_vector_with_support_1, properties_names_with_support_1) = compute_property_vectors_with_support(properties_vector[:,0:9], property_names[0:9], threshold_lower_1, threshold_upper_2);
+    (properties_vector_with_support_1, properties_names_with_support_1) = compute_property_vectors_with_support(properties_vector[:,0:8], property_names[0:8], threshold_lower_1, threshold_upper_2);
 
     #nC2 properties
-    (properties_vector_with_support_2, properties_names_with_support_2) = compute_property_vectors_with_support(properties_vector[:,9:], property_names[9:], threshold_lower_2, threshold_upper_2);
+    (properties_vector_with_support_2, properties_names_with_support_2) = compute_property_vectors_with_support(properties_vector[:,8:], property_names[8:], threshold_lower_2, threshold_upper_2);
 
     properties_vector_with_support = np.concatenate((properties_vector_with_support_1, properties_vector_with_support_2), axis=1);
     property_names = np.concatenate((properties_names_with_support_1, properties_names_with_support_2), axis=0);
@@ -349,7 +393,7 @@ def compute_property_vectors(measures_dict=measures_dict, property_names=inv):
 def entropy(vector):
     prob_vector = vector/np.sum(vector);
     n = len(vector);
-    N = np.sum(vector);
+    # N = np.sum(vector);
     h = 0;
     for i in range(n):
         if(prob_vector[i]<0):
@@ -359,11 +403,9 @@ def entropy(vector):
 
     return h/np.log2(n);
 
-# def gini_index(vector):
-
     
-def compute_homogeneity(property_vector, cluster_vector):
-    # property_vector - n_prop_states x n_clusters
+def compute_homogeneity(property_matrix, cluster_vector):
+    # property_matrix - n_prop_states x n_clusters
     # cluster_vector - n_clusters x 1
 
     # number of clusters
@@ -372,17 +414,9 @@ def compute_homogeneity(property_vector, cluster_vector):
     H = 0;
 
     for i in range(n):
-        e = entropy(property_vector[:,i]);
-        # number of measures possessing the property
-        # p1 = property_vector[i];
-        # number of measures NOT possessing the property
-        # p2 = cluster_vector[i] - property_vector[i];
-        
-        #computing entropy for p1 and p2
-        # e = entropy(np.array([p1, p2]));
-        
         #computing weighted average of the entropies, but not considering cluster of size 1 or below
         if (cluster_vector[i] > 1):
+            e = entropy(property_matrix[:,i]);
             H += e * cluster_vector[i] / N_C;
 
     return H;
